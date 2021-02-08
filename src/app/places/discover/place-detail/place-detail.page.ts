@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {ModalController, NavController} from '@ionic/angular';
+import {ActionSheetController, ModalController, NavController} from '@ionic/angular';
 import {CreateBookingComponent} from '../../../bookings/create-booking/create-booking.component';
 import {Place} from '../../place.model';
 import {PlacesService} from '../../places.service';
@@ -16,8 +16,9 @@ export class PlaceDetailPage implements OnInit {
       private route: ActivatedRoute,
       private navCtrl: NavController,
       private modalCtrl: ModalController,
-      private placesService: PlacesService
-     ) { }
+      private placesService: PlacesService,
+      private actionSheetCtrl: ActionSheetController
+  ) { }
 
   ngOnInit() {
     this.route.paramMap.subscribe( paramMap => {
@@ -32,6 +33,34 @@ export class PlaceDetailPage implements OnInit {
   onBookPlace() {
     // this.router.navigateByUrl('places/tabs/discover');
     // this.navCtrl.navigateBack('places/tabs/discover');
+    this.actionSheetCtrl.create({
+      header: 'Choose an Action',
+      buttons: [
+        {
+          text: 'Select Date',
+          handler: () => {
+            this.openBookingModal('select');
+          }
+        },
+        {
+          text: 'Random Date',
+          handler: () => {
+            this.openBookingModal('random');
+          }
+        },
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        }
+      ]
+    })
+        .then(actionSheetEl => {
+          actionSheetEl.present();
+        });
+  }
+
+  openBookingModal(mode: 'select' | 'random') {
+    console.log(mode);
     this.modalCtrl.create({
       component: CreateBookingComponent,
       componentProps: { selectedPlace: this.place },
@@ -40,10 +69,10 @@ export class PlaceDetailPage implements OnInit {
       return modalEl.onDidDismiss();
     })
         .then(resultData => {
-      console.log(resultData.data, resultData.role);
-      if (resultData.role === 'confirm'){
-        console.log('Booked!');
-      }
-    });
+          console.log(resultData.data, resultData.role);
+          if (resultData.role === 'confirm'){
+            console.log('Booked!');
+          }
+        });
   }
 }
