@@ -21,6 +21,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    RouterModule.forChild(routes),
     PlacesPageRoutingModule,
   ],
   declarations: [PlacesPage]
